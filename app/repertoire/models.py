@@ -26,3 +26,21 @@ class File(models.Models):
 
     def __str__(self) -> str:
         return f"{self.filename} - {self.work_count} songs"
+
+
+class Contributor(models.Model):
+    id = AutoField(
+        auto_created=True,
+        primary_key=False,
+        unique=True
+    )
+    name = models.CharField(
+        verbose_name=u"Contributors name",
+        max_length=250,
+        primary_key=True
+    )
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+
