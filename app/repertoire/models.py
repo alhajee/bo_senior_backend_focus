@@ -4,13 +4,10 @@ from django.db.models.fields import AutoField
 from django.utils.translation import gettext as _
 
 
-class File(models.Models):
-    id = models.AutoField(
-        auto_created=True
-    )
+class File(models.Model):
     filename = models.CharField(
         verbose_name=_("File name"),
-        max_length=250
+        max_length=255
     )
     work_count = models.PositiveBigIntegerField(
         verbose_name=_("Number of works")
@@ -31,13 +28,12 @@ class File(models.Models):
 class Contributor(models.Model):
     id = AutoField(
         auto_created=True,
-        primary_key=False,
-        unique=True
+        primary_key=True,
     )
     name = models.CharField(
         verbose_name=u"Contributors name",
-        max_length=250,
-        primary_key=True
+        max_length=255,
+        unique=True
     )
 
     def __str__(self) -> str:
@@ -52,7 +48,7 @@ class Work(models.Model):
     )
     title = models.CharField(
         verbose_name=u"Music Title",
-        max_length=250
+        max_length=255
     )
     contributors = models.ManyToManyField(
         Contributor,
