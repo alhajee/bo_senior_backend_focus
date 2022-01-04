@@ -1,9 +1,5 @@
-from django.shortcuts import render
-
-
-from .models import File, Work
+from .models import Contributor, File, Work
 from rest_framework import viewsets
-from rest_framework import permissions
 from .serializers import FileSerializer, WorkSerializer
 
 
