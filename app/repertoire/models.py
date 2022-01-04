@@ -44,3 +44,38 @@ class Contributor(models.Model):
         return f"{self.name}"
 
 
+class Work(models.Model):
+    iswc = models.CharField(
+        verbose_name=_("International Standard Musical Work Code"),
+        max_length=11,
+        primary_key=True
+    )
+    title = models.CharField(
+        verbose_name=u"Music Title",
+        max_length=250
+    )
+    contributors = models.ManyToManyField(
+        Contributor,
+        verbose_name=_("Contributors"), 
+        blank=True
+    )
+    source = models.CharField(
+        verbose_name=_("Metadata provider"),
+        max_length=50
+    )
+    proprietary_id = models.PositiveIntegerField(
+        verbose_name=_("Proprietary ID"),
+        primary_key=False
+    )
+    created_at = models.DateTimeField(
+        verbose_name=_("Created at"),
+        auto_now_add=True
+    )
+    updated_at = models.DateTimeField(
+        verbose_name=_("Updated at"),
+        auto_now=True
+    )
+
+    def __str__(self) -> str:
+        contributors = "|".join(self.contributors.name)
+        return f"{self.title} - {contributors}"
