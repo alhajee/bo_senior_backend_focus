@@ -43,6 +43,9 @@ class Command(BaseCommand):
 
                 # get number of rows in file
                 row_count = sum(1 for row in data)
+                # minus header from row count
+                if header is True:
+                    row_count = row_count-1
 
                 # list to store object of musical works
                 works = list()
