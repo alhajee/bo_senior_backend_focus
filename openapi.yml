@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  title: BMAT Back Office Senior Web Developer Test - Backend Focus
+  version: 1.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /files:
+    get:
+      summary: Returns a list of files.
+      responses:
+        '200':
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/File'
+  /files/{file_id}:
+    get:
+      summary: Returns a file by ID.
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type : integer
+      responses: 
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+  /files/{file_id}/works:
+    get:
+      summary: Returns a list of works defined in a file.
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type : integer
+      responses:
+        '200':
+          description: A list of works, with count and containing file
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 1
+                  works:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Work'
+                  file:
+                    $ref: '#/components/schemas/File'
+  /files/{file_id}/works/{work_id}:
+    get:
+      summary: Returns a list of works defined in a file.
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type : integer
+        - name: work_id
+          in: path
+          required: true
+          schema:
+            type : integer
+      responses:
+        '200':
+          description: A serialization of a Work
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Work'
+components:
+  schemas:
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        filename:
+          type: string
+          example: works_metadata.csv
+        work_count:
+          type: integer
+          example: 1
+    Work:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        proprietary_id:
+          type: integer
+          example: 1
+        iswc:
+          type: string
+          example: T9204649558
+        source:
+          type: string
+          example: sony
+        title:
+          type: string
+          example: DREAMS
+        contributors:
+          type: array
+          items:
+            type: string
+            example: MCKENZIE
