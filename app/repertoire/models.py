@@ -26,10 +26,6 @@ class File(models.Model):
 
 
 class Contributor(models.Model):
-    id = AutoField(
-        auto_created=True,
-        primary_key=True,
-    )
     name = models.CharField(
         verbose_name=u"Contributors name",
         max_length=255,
@@ -41,13 +37,17 @@ class Contributor(models.Model):
 
 
 class Work(models.Model):
+    file = models.ForeignKey(
+        File, related_name='works', 
+        on_delete=models.CASCADE
+    )
     iswc = models.CharField(
         verbose_name=_("International Standard Musical Work Code"),
         max_length=11,
         primary_key=True
     )
     title = models.CharField(
-        verbose_name=u"Music Title",
+        verbose_name=_("Music Title"),
         max_length=255
     )
     contributors = models.ManyToManyField(
@@ -71,6 +71,18 @@ class Work(models.Model):
         verbose_name=_("Updated at"),
         auto_now=True
     )
+
+    class Meta:
+        """
+        Set unique constraint & index on iswc and proprietary_id
+        """
+        unique_together = [
+            ['iswc', 'proprietary_id']
+        ]
+        
+        index_together = [
+            ["iswc", "proprietary_id"],
+        ]
 
     def __str__(self) -> str:
         contributors = "|".join(self.contributors.name)
