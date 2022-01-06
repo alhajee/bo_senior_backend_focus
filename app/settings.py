@@ -40,10 +40,12 @@ INSTALLED_APPS = [
     # Local App
     "repertoire.apps.RepertoireConfig",
     # Third Party Apps
-    "rest_framework"
+    "rest_framework",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +54,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS: bool
+
+# CORS_ORIGIN_WHITELIST = [
+#      'http://localhost:8000',
+#      'http://localhost:8001'
+# ]
 
 ROOT_URLCONF = 'urls'
 
