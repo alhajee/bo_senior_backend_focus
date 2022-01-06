@@ -4,7 +4,9 @@ from rest_framework import routers
 from repertoire import views
 
 router = routers.DefaultRouter()
-router.register(r'files', views.FileViewSet)
+router.register(r'files', views.FileViewSet, basename='files')
+router.register(r'files/(?P<file_id>[^/.]+)/works', views.WorksViewSet, basename='works')
+
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
