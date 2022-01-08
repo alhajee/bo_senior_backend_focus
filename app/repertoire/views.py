@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from .models import Contributor, File, Work
-from .serializers import FileSerializer, WorksSerializer
+from .serializers import FileSerializer, WorksSerializer, WorkSerializer
 
 
 Files = namedtuple('Files', ('files', 'works', 'count'))
@@ -66,12 +66,15 @@ class WorksViewSet(viewsets.ViewSet):
 
         queryset = Work.objects.filter(file=file)
         
-        serializer = WorksSerializer(queryset, many=True)
+        serializer = WorkSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, file_id, pk=None):
-        queryset = File.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = FileSerializer(user)
+        file_queryset = File.objects.all()
+        file = get_object_or_404(file_queryset, pk=file_id)
+
+        work_queryset = Work.objects.all()
+        work = get_object_or_404(work_queryset, pk=pk)
+        serializer = WorkSerializer(work)
         return Response(serializer.data)
     

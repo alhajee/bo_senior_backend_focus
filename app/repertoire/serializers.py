@@ -3,15 +3,13 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 
-class ContributorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Contributor
-        fields = ['name']
-
-
 class WorkSerializer(serializers.ModelSerializer):
+    contributors = serializers.StringRelatedField(
+        many=True,
+        read_only=True,
+    )
     class Meta:
-        model = Work
+        model = Work    
         fields = ['id', 'proprietary_id', 'iswc', 'source', 'title', 'contributors']
 
 
@@ -22,10 +20,10 @@ class FileSerializer(serializers.ModelSerializer):
 
 
 class WorksSerializer(serializers.Serializer):
+    works = WorkSerializer(many=True)
+    files = FileSerializer(many=True)
+    count = 1
     class Meta:
-        works = WorkSerializer(many=True)
-        files = FileSerializer(many=True)
-        count = 1
         fields = ['count', 'files', 'works']
 
 
