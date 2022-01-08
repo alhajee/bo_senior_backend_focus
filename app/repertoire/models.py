@@ -26,8 +26,14 @@ class File(models.Model):
 
 
 class Contributor(models.Model):
+    id = models.BigAutoField(
+        auto_created=True, 
+        primary_key=True, 
+        serialize=False, 
+        verbose_name='ID'
+    )
     name = models.CharField(
-        verbose_name=u"Contributors name",
+        verbose_name=_("Contributors name"),
         max_length=255,
         unique=True
     )
@@ -44,7 +50,6 @@ class Work(models.Model):
     iswc = models.CharField(
         verbose_name=_("International Standard Musical Work Code"),
         max_length=11,
-        primary_key=True
     )
     title = models.CharField(
         verbose_name=_("Music Title"),
@@ -77,13 +82,15 @@ class Work(models.Model):
         Set unique constraint & index on iswc and proprietary_id
         """
         unique_together = [
-            ['iswc', 'proprietary_id']
+            ['iswc', 'source']
         ]
         
         index_together = [
-            ["iswc", "proprietary_id"],
+            ["iswc", "source"],
         ]
 
-    def __str__(self) -> str:
-        contributors = "|".join(self.contributors.name)
-        return f"{self.title} - {contributors}"
+    # def __str__(self) -> str:
+    #     if self.contributors:
+    #         return f"{self.title}"
+    #     else:
+    #         return f"{self.title}"
