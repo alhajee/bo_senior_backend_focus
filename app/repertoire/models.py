@@ -39,7 +39,7 @@ class Contributor(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return self.name
 
 
 class Work(models.Model):
