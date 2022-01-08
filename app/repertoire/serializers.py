@@ -4,9 +4,10 @@ from rest_framework.reverse import reverse
 
 
 class WorkSerializer(serializers.ModelSerializer):
-    contributors = serializers.StringRelatedField(
+    contributors = serializers.SlugRelatedField(
         many=True,
         read_only=True,
+        slug_field='name'
     )
     class Meta:
         model = Work    
