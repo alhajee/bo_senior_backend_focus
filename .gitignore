@@ -4,3 +4,4 @@ __pycache__
 .python_history
 .pyc
 data
+app/repertoire/admin.py
