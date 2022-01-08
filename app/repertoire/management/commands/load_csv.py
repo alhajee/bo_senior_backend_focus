@@ -19,6 +19,11 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # clean database
+        Contributor.objects.all().delete()
+        Work.objects.all().delete()
+        File.objects.all().delete()
+
         start_time = timezone.now()
         file_path = options["file_path"]
         
@@ -29,7 +34,7 @@ class Command(BaseCommand):
             header = options['header']
 
         try:
-            with open(file_path, "r") as csv_file:
+            with open(f"/files/{file_path}", "r") as csv_file:
                 # does csv file has header
 
                 # get start time
@@ -37,32 +42,6 @@ class Command(BaseCommand):
                 
                 # define the max rows to insert into the database
                 MAX_ROWS = 1000
-
-                # create a data reader
-                data = csv.reader(csv_file, delimiter=",")
-
-                # get number of rows in file
-                row_count = sum(1 for row in data)
-                # minus header from row count
-                if header is True:
-                    row_count = row_count-1
-
-                # list to store object of musical works
-                works = list()
-
-                # save file metadata in model if file is not empty
-                if row_count > 0:    
-                    file = File(
-                        filename = file_path,
-                        work_count = row_count
-                    )
-                    file.save()
-                else:
-                    self.stderr.write(
-                        'Empty file'
-                    )
-                    # raise exception if file is empty
-                    raise CommandError('Cannot process file with 0 rows')
 
                 # define default index of columns
                 columns = {
@@ -73,59 +52,83 @@ class Command(BaseCommand):
                     "proprietary_id": 4
                 }
 
-                # read works and save them in database
-                for row in data:
+                # create a data reader
+                csv_reader = csv.reader(csv_file, delimiter=",")
 
-                    # run once and update column index if 
-                    # headers do not come in expected order
-                    if header:
-                        for index, column_name in enumerate(row):
-                            columns[column_name] = index
-                        # set header to false to only execute this code once
-                        header = False
+                # # get number of rows in file
+                # row_count = sum(1 for row in csv_reader)
+                row_count = 0
                 
+                header_list = list()
+
+                # update column index if headers do not come in expected order
+                if header is True:
+                    header_list = next(csv_reader)
+
+                    for index, column_name in enumerate(header_list):
+                        columns[column_name] = index
+                
+                # list to store object of musical works
+                works = list()
+                contributor_ids = list()
+                # save file metadata in model
+                file = File(
+                    filename = file_path,
+                    work_count = row_count
+                )
+                file.save()
+            
+                # read works and save them in batches into database
+                for row in csv_reader:
                     # get the various name of contributors
                     contributor_list = row[columns.get("contributors")]
                     contributor_list = contributor_list.split("|")
-                    # a list of contributor objects
-                    contributors = list()
-
-                    # create the contributors in the database
-                    for contributor in contributor_list:
-                        obj, created = Contributor.objects.get_or_create(
-                            name=contributor
-                        )
-                        obj.save()
-                        contributors.append(obj)
 
                     # create object from metadata on a musical work
                     work = Work(
+                        file=file,
                         title=row[columns.get("title")],
                         iswc=row[columns.get("iswc")],
                         source=row[columns.get("source")],
                         proprietary_id=row[columns.get("proprietary_id")]
                     )
-                    
-                    # add contributors
-                    for contributor in contributors:
-                        work.contributor.add(contributor)
+
+                    # save contributors or get ID if it exist in the database
+                    temp_contributors = list()
+                    for contributor in contributor_list:
+                        obj, created = Contributor.objects.get_or_create(
+                            name=contributor
+                        )
+                        # save if object was created not retrieved
+                        if created:
+                            # print(f"created {created}")
+                            obj.save()
+
+                        temp_contributors.append(obj.id)                        
+                        # work.save()
+                        # work.contributors.add(obj)
+                    contributor_ids.append(set(temp_contributors))
 
                     # append musical works for bulk insertion
                     works.append(work)
 
-                    # run a bulk insert once the number of works exceed MAX_ROWS
-                    if len(works) > MAX_ROWS:
-                        Work.objects.bulk_create(works)
-                        works = []
-
-                # run a bulk insert if number of works isn't up to MAX_ROWS
+                # run a bulk insert with a batch size of MAX_ROWS
                 if works:
-                    Work.objects.bulk_create(works)
+                    work_ids = Work.objects.bulk_create(works, batch_size=MAX_ROWS)
+
+                    jobs = list()
+                    for (work_id, contributor_id) in zip(work_ids, contributor_ids):
+                        # print(work_id, contributor_id)
+                        for id in contributor_id:
+                           jobs.append(Work.contributors.through(contributor_id=id, work_id=work_id.id))
+                    Work.contributors.through.objects.bulk_create(jobs)
 
                 end_time = timezone.now()
    
-        except Exception as e:
+        except FileNotFoundError as e:
             raise FileNotFoundError('File "%s" does not exist' % file_path)
+        except Exception as e:
+            print(e)
 
         self.stdout.write(
             self.style.SUCCESS(
