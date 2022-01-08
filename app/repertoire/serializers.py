@@ -20,11 +20,7 @@ class FileSerializer(serializers.ModelSerializer):
         fields = ['id', 'filename', 'work_count']
 
 
-class WorksSerializer(serializers.Serializer):
+class FileWorksSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
     works = WorkSerializer(many=True)
-    files = FileSerializer(many=True)
-    count = 1
-    class Meta:
-        fields = ['count', 'files', 'works']
-
-
+    file = FileSerializer(many=True)
