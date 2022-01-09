@@ -47,7 +47,7 @@ class WorksViewSet(viewsets.ViewSet):
         # get all works in that file
         works_queryset = Work.objects.filter(file=file)
         # get length of query result
-        count = works_queryset.__len__
+        count = works_queryset.__len__()
         # pass in the required data to the serializer
         fileworks = self.FileWorks(
             count=count,
@@ -73,4 +73,3 @@ class WorksViewSet(viewsets.ViewSet):
         # send query to serializer
         serializer = WorkSerializer(work)
         return Response(serializer.data)
-    
