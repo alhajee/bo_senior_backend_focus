@@ -167,3 +167,58 @@ class ContributorTestCase(APITestCase):
                 )
         self.assertEqual(IntegrityError, type(raised.exception))
 
+        
+class LoadCsvTests(APITestCase):
+    def call_command(self, *args, **kwargs):
+        out = StringIO()
+        call_command(
+            "load_csv",
+            *args,
+            stdout=out,
+            stderr=StringIO(),
+            **kwargs,
+        )
+        return out.getvalue()
+
+    def test_file_not_provided(self):
+        with self.assertRaises(Exception) as raised:
+            out = self.call_command()
+        self.assertEqual(CommandError, type(raised.exception))
+        
+    def test_file_does_not_exist(self):
+        args = ['does_not_exist.csv']
+        opts = {}
+
+        with self.assertRaises(Exception) as raised:
+            out = self.call_command("-f", *args, **opts)
+        self.assertEqual(FileNotFoundError, type(raised.exception))
+
+    def test_load_csv(self):
+        # name of file to load
+        args = ['sony.csv']
+        opts = {}
+
+        out = self.call_command("-f", *args, **opts)
+        self.assertIn(f"Loaded {args[0]} successfully", out)
+
+    def test_load_multiple_csv(self):
+        # name of files to load
+        args = ['sony.csv', 'universal.csv', 'warner.csv']
+        opts = {}
+
+        out = self.call_command("-f", *args, **opts)
+
+        # test to see if all files were loaded successfully
+        for file in args:
+            self.assertIn(f"Loaded {file} successfully", out)
+    
+    def test_list_files_after_load(self):
+        response = self.client.get("/files/")
+        
+        request_content = json.loads(response.content)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
