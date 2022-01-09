@@ -133,3 +133,37 @@ class FileTestCase(APITestCase):
         )
 
 
+class ContributorTestCase(APITestCase):
+    expected_response = dict()
+
+    def create_contributor(self, name):
+        return Contributor.objects.create(
+            name = name,
+        )
+
+    def setUp(self):
+        self.contributor_1 = self.create_contributor(
+            name = "Edward Christopher Sheeran",
+        )
+        self.contributor_2 = self.create_contributor(
+            name = "Obispo Pascal Michel",
+        )
+
+        self.contributor_3 = self.create_contributor(
+            name = "Florence Lionel Jacques",
+        )
+
+    def test_contributor_creation(self):
+        obj = self.create_contributor(
+            name="test"
+        )
+        self.assertTrue(isinstance(obj, Contributor))
+        self.assertEqual(obj.__str__(), obj.name)
+
+    def test_contributors_with_same_name(self):
+        with self.assertRaises(Exception) as raised:
+            self.contributor_1 = self.create_contributor(
+                name = "Edward Christopher Sheeran",
+                )
+        self.assertEqual(IntegrityError, type(raised.exception))
+
