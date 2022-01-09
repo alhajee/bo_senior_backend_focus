@@ -133,8 +133,10 @@ class Command(BaseCommand):
                             for id in contributor_id:
                                 jobs.append(Work.contributors.through(contributor_id=id, work_id=work_id.id))
                         Work.contributors.through.objects.bulk_create(jobs)
-
-                    end_time = timezone.now()
+                # successfully loaded csv file
+                self.stdout.write(f"Loaded {file_path} successfully\n")
+            # save the time files were loaded successfully
+            end_time = timezone.now()
    
         except FileNotFoundError as e:
             raise FileNotFoundError('File "%s" does not exist' % file_path)
