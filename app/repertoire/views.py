@@ -21,7 +21,7 @@ class FileViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for listing or retrieving files and works
     """
-    queryset = File.objects.all().order_by('-created_at')
+    queryset = File.objects.all()
     serializer_class = FileSerializer
 
 
@@ -42,7 +42,7 @@ class WorksViewSet(viewsets.ViewSet):
         handles /files/<file_id>/works/
         """
         # get the file
-        file_queryset = File.objects.all()
+        file_queryset = File.objects.filter(pk=file_id)
         file = get_object_or_404(file_queryset, pk=file_id)
         # get all works in that file
         works_queryset = Work.objects.filter(file=file)
