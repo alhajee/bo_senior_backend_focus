@@ -27,11 +27,6 @@ class Command(BaseCommand):
         if not f:
             raise CommandError('Files not provided')
 
-        # clean database
-        Contributor.objects.all().delete()
-        Work.objects.all().delete()
-        File.objects.all().delete()
-
         start_time = timezone.now()
 
         header = True
