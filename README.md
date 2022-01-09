@@ -3,11 +3,13 @@ BMAT Back Office Senior Web Developer Test: Backend Focus
 
 ## Contents
 
-* Some Context
-* Running the Stack
-* Part 1 - Creating an API
-* Part 2 - File Ingestion
-* Part 3 - Questions
+* [Solution](#solution)
+* [Some Context](#some-context)
+* [Running the Stack](#running-the-stack)
+* [Part 1 - Creating an API](#part-1---creating-an-api)
+* [Part 2 - File Ingestion](#part-2---file-ingestion)
+* [Part 3 - Questions](#part-3---questions)
+* [Setup](#setup)
 
 ## Some context
 
@@ -108,22 +110,22 @@ query size in a single request
 
 1. Deploy docker containers using the `docker-compose.yaml` and `Dockerfile`.
 ```bash
-docker-compose -f docker-compose up --build
+docker-compose up --build
 ```
 
 2. Make database migrations
 ```bash
-docker exec -it <container ID> python manage.py migrate
+docker-compose exec -it api python manage.py migrate
 ```
 
 3. Ingest all three csv files
 ```bash
-docker exec -it <container ID> python manage.py load_csv -f sony.csv universal.csv warner.csv
+docker-compose exec -it api python manage.py load_csv -f sony.csv universal.csv warner.csv
 ```
 
 4. Run unit tests & integration tests
 ```bash
-docker exec -it <container ID> python manage.py test repertoire.tests
+docker-compose exec -it api python manage.py test repertoire.tests
 ```
 
 5. Access the API endpoints through
