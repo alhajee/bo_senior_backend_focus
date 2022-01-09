@@ -68,3 +68,38 @@ If you manage to ingest the three files provided, you'll be able to use the API 
 * Could you use the endpoints described in this assignment or would have to create some new endpoints to provide the works of the SingleView?
 
 * Imagine that the Single View has 20 million musical works, do you think your solution would have a similar response time? What technologies would you use to keep response times reasonable?
+
+
+# Solution
+## Answer to questions
+
+1. If two files provide conflicting information on the same work, the reasonable thing to do is merge the fields that they do not agree on,
+since it is highly likely that both sources are correct
+
+2. The endpoints described in this assignment woulld not suffice to provide a SingleView, because it is highly dependant on the file/source.
+A SingleView can simply take a unique identifier for a work (work ID) to query all information on that particular work
+
+3. With a SingleView that containing at least 20 million musical work, the API will suffer from low response time due to the query size,
+But a solution would be to Implement caching and also pagination to limit the query size in a single request
+
+
+# Setup
+
+1. Deploy docker containers using the `docker-compose.yaml` and `Dockerfile`.
+```bash
+docker-compose -f docker-compose up --build
+```
+
+2. Make database migrations
+```bash
+docker exec -it <container ID> python manage.py migrate
+```
+3. Ingest all three csv files
+```bash
+docker exec -it <container ID> python manage.py load_csv -f sony.csv universal.csv warner.csv
+```
+4. access the API through
+```bash
+http://<host_machine_ip>:8000/
+```
+
