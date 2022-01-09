@@ -54,17 +54,17 @@ docker-compose up --build
 
 2. Make database migrations
 ```bash
-docker-compose exec -it api python manage.py migrate
+docker-compose exec api python manage.py migrate
 ```
 
 3. Ingest all three csv files
 ```bash
-docker-compose exec -it api python manage.py load_csv -f sony.csv universal.csv warner.csv
+docker-compose exec api python manage.py load_csv -f sony.csv universal.csv warner.csv
 ```
 
 4. Run unit tests & integration tests
 ```bash
-docker-compose exec -it api python manage.py test repertoire.tests
+docker-compose exec api python manage.py test repertoire.tests
 ```
 
 5. Access the API endpoints through
