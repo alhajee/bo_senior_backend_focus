@@ -70,17 +70,38 @@ If you manage to ingest the three files provided, you'll be able to use the API 
 * Imagine that the Single View has 20 million musical works, do you think your solution would have a similar response time? What technologies would you use to keep response times reasonable?
 
 
+
 # Solution
+
+## Models
+- In order to avoid replicating contributors, I created a seperate model that stores <br>
+contributors and linked them to a musical work using `many-to-many` relationship. <br>
+This way, a contributor only has to be created once
+
+## Serializers
+- Created a custom serializer to join `count`, `work` and `file` together
+
+## URLs
+- Created two API routes, one to handle `files` and the other when `works` is present in query
+
+## FileIngestion
+- Created a `django management command` that Ingests large files in batch using <br>
+`through` & `bulk create` for improved performance 
+<!-- * SingleView -->
+
 ## Answer to questions
 
-1. If two files provide conflicting information on the same work, the reasonable thing to do is merge the fields that they do not agree on,
-since it is highly likely that both sources are correct
+1. If two files provide `conflicting information` on the same work, the reasonable thing to do is <br> 
+`ignore the fields they have in common`, and `merge the fields they differ`, since it is highly <br>
+likely that both sources are correct
 
-2. The endpoints described in this assignment woulld not suffice to provide a SingleView, because it is highly dependant on the file/source.
-A SingleView can simply take a unique identifier for a work (work ID) to query all information on that particular work
+2. The endpoints described in this assignment woulld not suffice to provide a `SingleView`, because it is highly <br>
+dependant on the file/source. A SingleView can simply take a unique identifier for a work (work ID) to query <br>
+all information related to that particular work
 
-3. With a SingleView that containing at least 20 million musical work, the API will suffer from low response time due to the query size,
-But a solution would be to Implement caching and also pagination to limit the query size in a single request
+3. With a SingleView that contains at least `20 million musical work`, the API will suffer from `low response time`<br>
+due to the `query size`, But a solution would be to Implement `caching` and also `pagination` to limit the <br>
+query size in a single request
 
 
 # Setup
