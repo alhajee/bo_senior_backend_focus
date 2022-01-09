@@ -94,12 +94,19 @@ docker-compose -f docker-compose up --build
 ```bash
 docker exec -it <container ID> python manage.py migrate
 ```
+
 3. Ingest all three csv files
 ```bash
 docker exec -it <container ID> python manage.py load_csv -f sony.csv universal.csv warner.csv
 ```
-4. access the API through
+
+4. Run unit tests & integration tests
 ```bash
-http://<host_machine_ip>:8000/
+docker exec -it <container ID> python manage.py test repertoire.tests
+```
+
+5. Access the API endpoints through
+```bash
+http://<host_machine_ip>:8000/files
 ```
 
